@@ -11,3 +11,13 @@ margin-right: 16px;
 .flex-spacer {
 flex: 1 1 auto;
 }
+
+@import '~@angular/material/theming';
+@include mat-core();
+
+  $primary: mat-palette($mat-green,300);
+  $accent: mat-palette($mat-green,100);
+
+  $theme: mat-light-theme($primary, $accent);
+
+@include angular-material-theme($theme);
