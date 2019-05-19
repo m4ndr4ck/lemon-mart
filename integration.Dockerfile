@@ -3,7 +3,7 @@ FROM duluca/minimal-node-build-env:8.9.4 as builder
 # project variables
 ENV SRC_DIR /usr/src
 ENV GIT_REPO https://github.com/m4ndr4ck/lemon-mart.git
-ENV BUILD_SCRIPT build:prod
+ENV BUILD_SCRIPT npm run build:prod
 
 # get source code
 RUN mkdir -p $SRC_DIR
