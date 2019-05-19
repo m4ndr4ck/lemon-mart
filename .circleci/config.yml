@@ -1,14 +1,26 @@
-#test
 version: 2
 jobs:
   build:
     docker:
       - image: docker:17.12.0-ce-git
-  working_directory: /usr/src
-  steps:
-    - checkout
-    - setup_remote_docker
-    - run:
-        name: Build Docker Image
-        command: |
-        npm run build:ci
+    working_directory: /usr/src
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Execute Pipeline (Build Source -> Test -> Build Web Server)
+          # code is checked out in the pipeline, consider copying from CI to Pipeline
+          # consider caching node_modules or switching to npm ci option when it becomes stable
+          command: |
+            docker build -f integration.Dockerfile . -t lemon-mart:$CIRCLE_BRANCH --build-arg CACHEBUST=$(date +%s)
+            mkdir -p docker-cache
+            docker save -o docker-cache/built-image.tar lemon-mart:$CIRCLE_BRANCH
+      - save_cache:
+          key: built-image-{{ .BuildNum }}
+          paths:
+            - docker-cache
+      - store_artifacts:
+          path: docker-cache/built-image.tar
+          destination: built-image.tar
+      - store_test_results:
+          path: tests/units.html
