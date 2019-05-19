@@ -11,3 +11,4 @@ jobs:
         name: Build Docker Image
         command: |
         npm run build:ci
+        
