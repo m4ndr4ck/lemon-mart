@@ -1,4 +1,3 @@
-
 /** describe("AppComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
