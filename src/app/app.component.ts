@@ -1,6 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatIconRegistry } from "@angular/material";
 import { DomSanitizer } from "@angular/platform-browser";
+import { AuthService } from "./auth/auth.service";
 
 @Component({
   selector: "app-root",
@@ -13,6 +14,7 @@ import { DomSanitizer } from "@angular/platform-browser";
       >
       <span class="flex-spacer"></span>
       <button
+        *ngIf="displayAccountIcons"
         mat-mini-fab
         routerLink="/user/profile"
         matTooltip="Profile"
@@ -21,6 +23,7 @@ import { DomSanitizer } from "@angular/platform-browser";
         <mat-icon>account_circle</mat-icon>
       </button>
       <button
+        *ngIf="displayAccountIcons"
         mat-mini-fab
         routerLink="/user/logout"
         matTooltip="Logout"
@@ -33,11 +36,22 @@ import { DomSanitizer } from "@angular/platform-browser";
   `,
   styleUrls: ["./app.component.css"]
 })
-export class AppComponent {
-  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+export class AppComponent implements OnInit {
+  displayAccountIcons = false;
+  constructor(
+    iconRegistry: MatIconRegistry,
+    sanitizer: DomSanitizer,
+    private authService: AuthService
+  ) {
     iconRegistry.addSvgIcon(
       "lemon",
       sanitizer.bypassSecurityTrustResourceUrl("assets/img/icons/lemon.svg")
+    );
+  }
+
+  ngOnInit() {
+    this.authService.authStatus.subscribe(
+      authStatus => (this.displayAccountIcons = authStatus.isAuthenticated)
     );
   }
 }
