@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "../auth/auth.service";
-import { UiService } from '../common/ui-service/ui-service.service';
+import { UiService } from "../common/ui-service/ui-service.service";
 import { EmailValidation, PasswordValidation } from "../common/validations";
 
 @Component({
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
       .subscribe(
         authStatus => {
           if (authStatus.isAuthenticated) {
-            this.uiService.showToast(`Welcome! Role:${authStatus.userRole}`)
+            this.uiService.showToast(`Welcome! Role:${authStatus.userRole}`);
             this.router.navigate([this.redirectUrl || "/manager"]);
           }
         },

@@ -10,12 +10,13 @@ import {
 } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { transformError } from "../common/common";
+import { CacheService } from "./cache.service";
 import { Role } from "./role.enum";
 
 @Injectable({
   providedIn: "root"
 })
-export class AuthService {
+export class AuthService extends CacheService {
   private fakeAuthProvider(
     email: string,
     password: string
@@ -25,17 +26,9 @@ export class AuthService {
         "Failed to login! Email needs to end with @test.com."
       );
     }
-    const authStatus = {
-      isAuthenticated: true,
-      userId: "e4d1bc2ab25c",
-      userRole: email.toLowerCase().includes("cashier")
-        ? Role.Cashier
-        : email.toLowerCase().includes("clerk")
-        ? Role.Clerk
-        : email.toLowerCase().includes("manager")
-        ? Role.Manager
-        : Role.None
-    } as IAuthStatus;
+    const authStatus = new BehaviorSubject<IAuthStatus>(
+      this.getItem("authStatus") || defaultAuthStatus
+    );
     const authResponse = {
       accessToken: sign(authStatus, "secret", {
         expiresIn: "1h",
@@ -49,6 +42,7 @@ export class AuthService {
     this.logout();
     const loginResponse = this.authProvider(email, password).pipe(
       map(value => {
+        this.setToken(value.accessToken);
         return decode(value.accessToken) as IAuthStatus;
       }),
       catchError(transformError)
@@ -65,6 +59,7 @@ export class AuthService {
     return loginResponse;
   }
   logout() {
+    this.clearToken();
     this.authStatus.next(defaultAuthStatus);
   }
 
@@ -76,10 +71,23 @@ export class AuthService {
   authStatus = new BehaviorSubject<IAuthStatus>(defaultAuthStatus);
 
   constructor(private httpClient: HttpClient) {
-    // Fake login function to simulate roles
-    this.authProvider = this.fakeAuthProvider;
-    // Example of a real login call to server-side
-    // this.authProvider = this.exampleAuthProvider
+    super();
+    this.authStatus.subscribe(authStatus =>
+      this.setItem("authStatus", authStatus)
+    );
+  }
+
+  private setToken(jwt: string) {
+    this.setItem("jwt", jwt);
+  }
+  private getDecodedToken(): IAuthStatus {
+    return decode(this.getItem("jwt"));
+  }
+  getToken(): string {
+    return this.getItem("jwt") || "";
+  }
+  private clearToken() {
+    this.removeItem("jwt");
   }
 }
 
