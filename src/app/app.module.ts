@@ -6,6 +6,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
+import { AuthGuard } from './auth/auth-guard.service';
 import { AuthHttpInterceptor } from "./auth/auth-http-interceptor";
 import { AuthService } from "./auth/auth.service";
 import { UiService } from "./common/ui-service/ui-service.service";
@@ -35,6 +36,7 @@ import { PageNotFoundComponent } from "./page-not-found/page-not-found.component
   ],
   providers: [
     AuthService,
+    AuthGuard,
     UiService,
     {
       provide: HTTP_INTERCEPTORS,

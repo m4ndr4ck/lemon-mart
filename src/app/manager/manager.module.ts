@@ -7,6 +7,8 @@ import { ManagerRoutingModule } from "./manager-routing.module";
 import { ManagerComponent } from "./manager.component";
 import { ReceiptLookupComponent } from "./receipt-lookup/receipt-lookup.component";
 import { UserManagementComponent } from "./user-management/user-management.component";
+import { AuthService } from '../auth/auth.service';
+import { AuthGuard } from '../auth/auth-guard.service';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,10 @@ import { UserManagementComponent } from "./user-management/user-management.compo
     MaterialModule,
     MatButtonModule,
     MatToolbarModule
-  ]
+  ],
+  providers: [
+    AuthService,
+    AuthGuard,
+  ],
 })
-export class ManagerModule {}
+export class ManagerModule { }

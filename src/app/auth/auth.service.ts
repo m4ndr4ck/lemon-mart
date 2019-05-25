@@ -2,12 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { sign } from "fake-jwt-sign"; // For fakeAuthProvider only
 import * as decode from "jwt-decode";
-import {
-  BehaviorSubject,
-  Observable,
-  of,
-  throwError as observableThrowError
-} from "rxjs";
+import { BehaviorSubject, Observable, of, throwError as observableThrowError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { transformError } from "../common/common";
 import { CacheService } from "./cache.service";
@@ -16,7 +11,7 @@ import { Role } from "./role.enum";
 @Injectable({
   providedIn: "root"
 })
-export class AuthService extends CacheService {
+export class AuthService extends CacheService implements AuthService {
   private fakeAuthProvider(
     email: string,
     password: string
@@ -97,11 +92,18 @@ export interface IAuthStatus {
   userId: string;
 }
 
+export interface IAuthService {
+  authStatus: BehaviorSubject<IAuthStatus>
+  login(email: string, password: string): Observable<IAuthStatus>
+  logout()
+  getToken(): string
+}
+
 interface IServerAuthResponse {
   accessToken: string;
 }
 
-const defaultAuthStatus = {
+export const defaultAuthStatus = {
   isAuthenticated: false,
   userRole: Role.None,
   userId: null
